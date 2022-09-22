@@ -1,0 +1,22 @@
+From: =?utf-8?b?RnLDqWTDqXJpYyBCb25uYXJk?= <frediz@debian.org>
+Date: Wed, 21 Aug 2019 14:59:30 +0200
+Subject: Use file operation used on x86 for ARCH_UNKNOWN
+
+On arches where only file operation make sense such as x86, use the same
+code.
+---
+ external/common/get_arch.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/external/common/get_arch.sh b/external/common/get_arch.sh
+index 682710f..0698904 100755
+--- a/external/common/get_arch.sh
++++ b/external/common/get_arch.sh
+@@ -6,6 +6,6 @@ echo -n ARCH_POWERPC
+ #elif defined(__arm__)
+ echo -n ARCH_ARM
+ #else
+-echo -n ARCH_UNKNOWN
++echo -n ARCH_X86
+ #endif" | $1cpp | /bin/sh
+ 

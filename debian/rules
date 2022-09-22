@@ -1,0 +1,44 @@
+#!/usr/bin/make -f
+
+include /usr/share/dpkg/default.mk
+
+# Uncomment this to turn on verbose mode.
+export DH_VERBOSE=1
+# Disable PIE flag has it makes opal-prd segfault
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all,-pie
+# Also force no-pie for Ubuntu 16.10 where gcc's defaults have been set to
+# build Position Independent Executables (PIE) on amd64 and ppc64le (gcc was
+# configured this way for s390x in Ubuntu 16.04 LTS).
+export DEB_LDFLAGS_MAINT_APPEND = -no-pie
+
+
+%:
+	dh $@
+
+override_dh_auto_build-arch:
+ifneq (,$(filter $(DEB_TARGET_ARCH), ppc64 ppc64el))
+	OPAL_PRD_VERSION=opal-prd-$(DEB_VERSION_UPSTREAM) make V=1 -C external/opal-prd/
+endif
+	GARD_VERSION=gard-$(DEB_VERSION_UPSTREAM) make V=1 -C external/gard/
+	PFLASH_VERSION=pflash-$(DEB_VERSION_UPSTREAM) make V=1 -C external/pflash
+	XSCOM_VERSION=xcom-$(DEB_VERSION_UPSTREAM) make V=1 -C external/xscom-utils
+
+override_dh_auto_install-arch:
+ifneq (,$(filter $(DEB_TARGET_ARCH), ppc64 ppc64el))
+	make -C external/opal-prd/ prefix=/usr DESTDIR=../../debian/tmp/ install
+endif
+	make -C external/gard/ prefix=/usr DESTDIR=../../debian/tmp/ install
+	make -C external/pflash/ prefix=/usr DESTDIR=../../debian/tmp/ install
+	make -C external/xscom-utils/ prefix=/usr DESTDIR=../../debian/tmp/ install
+
+override_dh_auto_clean:
+	make -C external/opal-prd/ distclean
+	make -C external/gard/ distclean
+	make -C external/pflash/ distclean
+	make -C external/xscom-utils/ distclean
+	dh_auto_clean
+
+override_dh_auto_test-arch:
+	# We only run test for the directories we build utils from and where tests exists
+	# gard tests : no support for FSP based build systems
+	[ -d /proc/device-tree/fsps ] || make -C external/gard/ check

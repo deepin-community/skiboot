@@ -1,0 +1,5 @@
+0001-Resolve-merge-conflict-by-incorporating-both-suggest.patch
+0002-Use-default-m32-m64-gcc-flag.patch
+0003-Use-file-operation-used-on-x86-for-ARCH_UNKNOWN.patch
+0004-Move-sbin-commands-manpages-from-section-1-to-8.patch
+0005-Skip-tss2-build-removed-because-not-dfsg-compatible.patch

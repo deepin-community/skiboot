@@ -1,0 +1,21 @@
+From: =?utf-8?b?RnLDqWTDqXJpYyBCb25uYXJk?= <frediz@debian.org>
+Date: Tue, 26 Jan 2021 16:35:29 +0100
+Subject: Skip tss2 build : removed because not dfsg compatible
+
+Forwarded: not-needed
+---
+ libstb/Makefile.inc | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/libstb/Makefile.inc b/libstb/Makefile.inc
+index b609801..e3ee8a2 100644
+--- a/libstb/Makefile.inc
++++ b/libstb/Makefile.inc
+@@ -13,7 +13,6 @@ LIBSTB = $(LIBSTB_DIR)/built-in.a
+ include $(SRC)/$(LIBSTB_DIR)/secvar/Makefile.inc
+ include $(SRC)/$(LIBSTB_DIR)/drivers/Makefile.inc
+ include $(SRC)/$(LIBSTB_DIR)/crypto/Makefile.inc
+-include $(SRC)/$(LIBSTB_DIR)/tss2/Makefile.inc
+ 
+ CPPFLAGS += -I$(SRC)/$(LIBSTB_DIR)/crypto/mbedtls/include
+ CPPFLAGS += -I$(SRC)/$(LIBSTB_DIR)/ibmtpm20tss/utils

@@ -1,0 +1,513 @@
+From: =?utf-8?b?RnLDqWTDqXJpYyBCb25uYXJk?= <frediz@debian.org>
+Date: Wed, 21 Aug 2019 12:00:51 +0200
+Subject: Move sbin commands manpages from section 1 to 8
+
+[git-debrebase split: mixed commit: upstream part]
+---
+ external/gard/opal-gard.1      | 30 -------------
+ external/gard/opal-gard.8      | 30 +++++++++++++
+ external/gard/rules.mk         |  2 +-
+ external/pflash/Makefile       |  2 +-
+ external/pflash/pflash.1       | 96 ------------------------------------------
+ external/pflash/pflash.8       | 96 ++++++++++++++++++++++++++++++++++++++++++
+ external/xscom-utils/Makefile  |  6 +--
+ external/xscom-utils/getscom.1 | 23 ----------
+ external/xscom-utils/getscom.8 | 23 ++++++++++
+ external/xscom-utils/getsram.1 | 23 ----------
+ external/xscom-utils/getsram.8 | 23 ++++++++++
+ external/xscom-utils/putscom.1 | 18 --------
+ external/xscom-utils/putscom.8 | 18 ++++++++
+ 13 files changed, 195 insertions(+), 195 deletions(-)
+ delete mode 100644 external/gard/opal-gard.1
+ create mode 100644 external/gard/opal-gard.8
+ delete mode 100644 external/pflash/pflash.1
+ create mode 100644 external/pflash/pflash.8
+ delete mode 100644 external/xscom-utils/getscom.1
+ create mode 100644 external/xscom-utils/getscom.8
+ delete mode 100644 external/xscom-utils/getsram.1
+ create mode 100644 external/xscom-utils/getsram.8
+ delete mode 100644 external/xscom-utils/putscom.1
+ create mode 100644 external/xscom-utils/putscom.8
+
+diff --git a/external/gard/opal-gard.1 b/external/gard/opal-gard.1
+deleted file mode 100644
+index 65b2144..0000000
+--- a/external/gard/opal-gard.1
++++ /dev/null
+@@ -1,30 +0,0 @@
+-.TH opal-gard 1 "19 June 2015"
+-.SH NAME
+-opal-gard \- GUARD Partition manipulation tool for OpenPower hardware
+-.SH SYNOPSIS
+-\fBopal-gard\fP [ \-e | \-f \fIfile\fP | \-p ]
+-\fIcommand\fP
+-.SH DESCRIPTION
+-\fBopal-gard\fP allows reading of the GUARD partition on OpenPower hardware though the exposed mtd flash interface. The actual device (usually \fB/dev/mtd0\fR) is automatically detected.
+-.SS Options
+-\fB\-e, \-\-ecc\fP
+-Force reading/writing with ECC bytes.
+-.TP
+-\fB\-f, \-\-file\fP \fIfile\fR
+-Don't search for the \fB/dev/mtd\fR device, use \fIfile\fP instead.
+-.TP
+-.TP
+-\fB\-p, \-\-part\fP
+-Used in conjunction with \-f to specify that just the GUARD partition is in the \fIfile\fR and that libffs shouldn't be used.
+-.SS Commands
+-\fIcommand\fP
+-may be one of the following
+-.TP
+-\fBlist\fP
+-List current GARD records
+-.TP
+-\fBshow\fP
+-Show details of a GARD record
+-.TP
+-\fBclear\fP
+-Clear GARD records
+diff --git a/external/gard/opal-gard.8 b/external/gard/opal-gard.8
+new file mode 100644
+index 0000000..e1f3643
+--- /dev/null
++++ b/external/gard/opal-gard.8
+@@ -0,0 +1,30 @@
++.TH opal-gard 8 "19 June 2015"
++.SH NAME
++opal-gard \- GUARD Partition manipulation tool for OpenPower hardware
++.SH SYNOPSIS
++\fBopal-gard\fP [ \-e | \-f \fIfile\fP | \-p ]
++\fIcommand\fP
++.SH DESCRIPTION
++\fBopal-gard\fP allows reading of the GUARD partition on OpenPower hardware though the exposed mtd flash interface. The actual device (usually \fB/dev/mtd0\fR) is automatically detected.
++.SS Options
++\fB\-e, \-\-ecc\fP
++Force reading/writing with ECC bytes.
++.TP
++\fB\-f, \-\-file\fP \fIfile\fR
++Don't search for the \fB/dev/mtd\fR device, use \fIfile\fP instead.
++.TP
++.TP
++\fB\-p, \-\-part\fP
++Used in conjunction with \-f to specify that just the GUARD partition is in the \fIfile\fR and that libffs shouldn't be used.
++.SS Commands
++\fIcommand\fP
++may be one of the following
++.TP
++\fBlist\fP
++List current GARD records
++.TP
++\fBshow\fP
++Show details of a GARD record
++.TP
++\fBclear\fP
++Clear GARD records
+diff --git a/external/gard/rules.mk b/external/gard/rules.mk
+index 92ceb9b..2796b37 100644
+--- a/external/gard/rules.mk
++++ b/external/gard/rules.mk
+@@ -46,6 +46,6 @@ $(EXE): $(OBJS)
+ 
+ install: all
+ 	install -D $(EXE) $(DESTDIR)$(sbindir)/$(EXE)
+-	install -D -m 0644 $(EXE).1 $(DESTDIR)$(mandir)/man1/$(EXE).1
++	install -D -m 0644 $(EXE).8 $(DESTDIR)$(mandir)/man8/$(EXE).8
+ 
+ 
+diff --git a/external/pflash/Makefile b/external/pflash/Makefile
+index 2918b7c..216f471 100644
+--- a/external/pflash/Makefile
++++ b/external/pflash/Makefile
+@@ -25,7 +25,7 @@ check: version.o all
+ 
+ install: all $(INSTALLDEPS)
+ 	install -D pflash $(DESTDIR)$(sbindir)/pflash
+-	install -D -m 0644 pflash.1 $(DESTDIR)$(mandir)/man1/pflash.1
++	install -D -m 0644 pflash.8 $(DESTDIR)$(mandir)/man8/pflash.8
+ 
+ .PHONY: dist
+ #File is named $(PFLASH_VERSION).tar because the expectation is that pflash-
+diff --git a/external/pflash/pflash.1 b/external/pflash/pflash.1
+deleted file mode 100644
+index 5db8d46..0000000
+--- a/external/pflash/pflash.1
++++ /dev/null
+@@ -1,96 +0,0 @@
+-.TH pflash "1" "September 2016"
+-.SH NAME
+-pflash \- manual page for Open-Power Flash tool
+-.SH SYNOPSIS
+-\fBpflash\fP [\fI\,options\/\fP] \fI\,commands\/\fP...
+-.SH DESCRIPTION
+-pflash is a tool to access the flash modules
+-on such systems and update the OpenPower firmware.
+-.SS Options
+-.TP
+-\fB\-a\fP \fI\,address\/\fP, \fB\-\-address\fP=\fI\,address\/\fP
+-Specify the start address for erasing, reading or flashing
+-.TP
+-\fB\-s\fP \fI\,size\/\fP, \fB\-\-size\fP=\fI\,size\/\fP
+-Specify the size in bytes for erasing, reading or flashing
+-.TP
+-\fB\-P\fP \fI\,part_name\/\fP, \fB\-\-partition\fP=\fI\,part_name\/\fP
+-Specify the partition whose content is to be erased
+-programmed or read. This is an alternative to \fB\-a\fP and \fB\-s\fP
+-if both \fB\-P\fP and \fB\-s\fP are specified, the smallest of the
+-two will be used
+-.TP
+-\fB\-f\fP, \fB\-\-force\fP
+-Don't ask for confirmation before erasing or flashing
+-.TP
+-\fB\-d\fP, \fB\-\-dummy\fP
+-Don't write to flash
+-.TP
+-\fB\-m\fP, \fB\-\-mtd\fP
+-Avoid accessing the flash directly if the BMC supports it.
+-This will access the flash through the kernel MTD layer and
+-not the flash directly
+-.TP
+-\fB\-b\fP, \fB\-\-bmc\fP
+-Target BMC flash instead of host flash.
+-Note: This carries a high chance of bricking your BMC if you
+-don't know what you're doing. Consider \fB\-\-mtd\fP to be safe(r)
+-.TP
+-\fB\-F\fP \fI\,filename\/\fP, \fB\-\-flash\-file\fP \fI\,filename
+-Target filename instead of actual flash.
+-.TP
+-\fB\-S\fP, \fB\-\-side\fP
+-Side of the flash on which to operate, 0 (default) or 1
+-.TP
+-\fB\-T\fP, \fB\-\-toc\fP
+-libffs TOC on which to operate, defaults to 0.
+-leading 0x is required for interpretation of a hex value
+-.SS
+-Commands:
+-.TP
+-\fB\-4\fP, \fB\-\-enable\-4B\fP
+-Switch the flash and controller to 4\-bytes address
+-mode (no confirmation needed).
+-.TP
+-\fB\-3\fP, \fB\-\-disable\-4B\fP
+-Switch the flash and controller to 3\-bytes address
+-mode (no confirmation needed).
+-.TP
+-\fB\-r\fP \fI\,file\/\fP, \fB\-\-read\fP=\fI\,file\/\fP
+-Read flash content from address into file, use \fB\-s\fP
+-to specify the size to read (or it will use the source
+-file size if used in conjunction with \fB\-p\fP and \fB\-s\fP is not
+-specified). When using \fB\-r\fP together with \fB\-e\fP or \fB\-p\fP, the
+-read will be performed first
+-.TP
+-\fB\-E\fP, \fB\-\-erase\-all\fP
+-Erase entire flash chip (Not supported on all chips/controllers)
+-.TP
+-\fB\-e\fP, \fB\-\-erase\fP
+-Erase the specified region. If size or address are not
+-specified, but '\-\-program' is used, then the file
+-size will be used (rounded to an erase block) and the
+-address defaults to 0.
+-.TP
+-\fB\-p\fP \fI\,file\/\fP, \fB\-\-program\fP=\fI\,file\/\fP
+-Will program the file to flash. If the address is not
+-specified, it will use 0. If the size is not specified
+-it will use the file size. Otherwise it will limit to
+-the specified size (whatever is smaller). If used in
+-conjunction with any erase command, the erase will
+-take place first.
+-.TP
+-\fB\-t\fP, \fB\-\-tune\fP
+-Just tune the flash controller & access size
+-(Implicit for all other operations)
+-.TP
+-\fB\-c\fP \fB\-\-clear\fP
+-Used to ECC clear a partition of the flash
+-Must be used in conjunction with \fB\-P\fP. Will erase the
+-partition and then set all the ECC bits as they should be
+-.TP
+-\fB\-i\fP, \fB\-\-info\fP
+-Display some information about the flash.
+-.TP
+-\fB\-h\fP, \fB\-\-help\fP
+-This message.
+diff --git a/external/pflash/pflash.8 b/external/pflash/pflash.8
+new file mode 100644
+index 0000000..f3b44e5
+--- /dev/null
++++ b/external/pflash/pflash.8
+@@ -0,0 +1,96 @@
++.TH pflash "8" "September 2016"
++.SH NAME
++pflash \- manual page for Open-Power Flash tool
++.SH SYNOPSIS
++\fBpflash\fP [\fI\,options\/\fP] \fI\,commands\/\fP...
++.SH DESCRIPTION
++pflash is a tool to access the flash modules
++on such systems and update the OpenPower firmware.
++.SS Options
++.TP
++\fB\-a\fP \fI\,address\/\fP, \fB\-\-address\fP=\fI\,address\/\fP
++Specify the start address for erasing, reading or flashing
++.TP
++\fB\-s\fP \fI\,size\/\fP, \fB\-\-size\fP=\fI\,size\/\fP
++Specify the size in bytes for erasing, reading or flashing
++.TP
++\fB\-P\fP \fI\,part_name\/\fP, \fB\-\-partition\fP=\fI\,part_name\/\fP
++Specify the partition whose content is to be erased
++programmed or read. This is an alternative to \fB\-a\fP and \fB\-s\fP
++if both \fB\-P\fP and \fB\-s\fP are specified, the smallest of the
++two will be used
++.TP
++\fB\-f\fP, \fB\-\-force\fP
++Don't ask for confirmation before erasing or flashing
++.TP
++\fB\-d\fP, \fB\-\-dummy\fP
++Don't write to flash
++.TP
++\fB\-m\fP, \fB\-\-mtd\fP
++Avoid accessing the flash directly if the BMC supports it.
++This will access the flash through the kernel MTD layer and
++not the flash directly
++.TP
++\fB\-b\fP, \fB\-\-bmc\fP
++Target BMC flash instead of host flash.
++Note: This carries a high chance of bricking your BMC if you
++don't know what you're doing. Consider \fB\-\-mtd\fP to be safe(r)
++.TP
++\fB\-F\fP \fI\,filename\/\fP, \fB\-\-flash\-file\fP \fI\,filename
++Target filename instead of actual flash.
++.TP
++\fB\-S\fP, \fB\-\-side\fP
++Side of the flash on which to operate, 0 (default) or 1
++.TP
++\fB\-T\fP, \fB\-\-toc\fP
++libffs TOC on which to operate, defaults to 0.
++leading 0x is required for interpretation of a hex value
++.SS
++Commands:
++.TP
++\fB\-4\fP, \fB\-\-enable\-4B\fP
++Switch the flash and controller to 4\-bytes address
++mode (no confirmation needed).
++.TP
++\fB\-3\fP, \fB\-\-disable\-4B\fP
++Switch the flash and controller to 3\-bytes address
++mode (no confirmation needed).
++.TP
++\fB\-r\fP \fI\,file\/\fP, \fB\-\-read\fP=\fI\,file\/\fP
++Read flash content from address into file, use \fB\-s\fP
++to specify the size to read (or it will use the source
++file size if used in conjunction with \fB\-p\fP and \fB\-s\fP is not
++specified). When using \fB\-r\fP together with \fB\-e\fP or \fB\-p\fP, the
++read will be performed first
++.TP
++\fB\-E\fP, \fB\-\-erase\-all\fP
++Erase entire flash chip (Not supported on all chips/controllers)
++.TP
++\fB\-e\fP, \fB\-\-erase\fP
++Erase the specified region. If size or address are not
++specified, but '\-\-program' is used, then the file
++size will be used (rounded to an erase block) and the
++address defaults to 0.
++.TP
++\fB\-p\fP \fI\,file\/\fP, \fB\-\-program\fP=\fI\,file\/\fP
++Will program the file to flash. If the address is not
++specified, it will use 0. If the size is not specified
++it will use the file size. Otherwise it will limit to
++the specified size (whatever is smaller). If used in
++conjunction with any erase command, the erase will
++take place first.
++.TP
++\fB\-t\fP, \fB\-\-tune\fP
++Just tune the flash controller & access size
++(Implicit for all other operations)
++.TP
++\fB\-c\fP \fB\-\-clear\fP
++Used to ECC clear a partition of the flash
++Must be used in conjunction with \fB\-P\fP. Will erase the
++partition and then set all the ECC bits as they should be
++.TP
++\fB\-i\fP, \fB\-\-info\fP
++Display some information about the flash.
++.TP
++\fB\-h\fP, \fB\-\-help\fP
++This message.
+diff --git a/external/xscom-utils/Makefile b/external/xscom-utils/Makefile
+index 2c799fa..3c60b2b 100644
+--- a/external/xscom-utils/Makefile
++++ b/external/xscom-utils/Makefile
+@@ -35,9 +35,9 @@ install: all
+ 	install -D getscom $(DESTDIR)$(sbindir)/getscom
+ 	install -D putscom $(DESTDIR)$(sbindir)/putscom
+ 	install -D getsram $(DESTDIR)$(sbindir)/getsram
+-	install -D -m 0644 getscom.1 $(DESTDIR)$(mandir)/man1/getscom.1
+-	install -D -m 0644 putscom.1 $(DESTDIR)$(mandir)/man1/putscom.1
+-	install -D -m 0644 getsram.1 $(DESTDIR)$(mandir)/man1/getsram.1
++	install -D -m 0644 getscom.8 $(DESTDIR)$(mandir)/man8/getscom.8
++	install -D -m 0644 putscom.8 $(DESTDIR)$(mandir)/man8/putscom.8
++	install -D -m 0644 getsram.8 $(DESTDIR)$(mandir)/man8/getsram.8
+ 
+ .PHONY: clean
+ clean:
+diff --git a/external/xscom-utils/getscom.1 b/external/xscom-utils/getscom.1
+deleted file mode 100644
+index 295b99d..0000000
+--- a/external/xscom-utils/getscom.1
++++ /dev/null
+@@ -1,23 +0,0 @@
+-.TH XSCOM "1" "September 2016"
+-.SH NAME
+-getscom \- part of xscom utils
+-.SH SYNOPIS
+-.TP
+-\fBgetscom\fP [\-c | \-\-chip \fIchip\-id\fP] \fIaddr\fP
+-.TP
+-\fBgetscom\fP [\-l | \-\-list\-chips]
+-.TP
+-\fBgetscom\fP [\-v | \-\-version]
+-.SH DESCRIPTION
+-\fBgetscom\fP utility provides an interface to query the
+-registers of the different chipsets of an OpenPower system.
+-.SS Options
+-.TP
+-\fB\-c|\-\-chip-id\fP \fIchip-id\fP
+-Specify chipset where to read register at \fIaddr\fP
+-.TP
+-\fB\-l|\-\-list\-chips\fP
+-List the chipsets found on the system
+-.TP
+-\fB\-v|\-\-version\fP
+-Display version of the tool
+diff --git a/external/xscom-utils/getscom.8 b/external/xscom-utils/getscom.8
+new file mode 100644
+index 0000000..1de51a9
+--- /dev/null
++++ b/external/xscom-utils/getscom.8
+@@ -0,0 +1,23 @@
++.TH XSCOM "8" "September 2016"
++.SH NAME
++getscom \- part of xscom utils
++.SH SYNOPIS
++.TP
++\fBgetscom\fP [\-c | \-\-chip \fIchip\-id\fP] \fIaddr\fP
++.TP
++\fBgetscom\fP [\-l | \-\-list\-chips]
++.TP
++\fBgetscom\fP [\-v | \-\-version]
++.SH DESCRIPTION
++\fBgetscom\fP utility provides an interface to query the
++registers of the different chipsets of an OpenPower system.
++.SS Options
++.TP
++\fB\-c|\-\-chip-id\fP \fIchip-id\fP
++Specify chipset where to read register at \fIaddr\fP
++.TP
++\fB\-l|\-\-list\-chips\fP
++List the chipsets found on the system
++.TP
++\fB\-v|\-\-version\fP
++Display version of the tool
+diff --git a/external/xscom-utils/getsram.1 b/external/xscom-utils/getsram.1
+deleted file mode 100644
+index 19b2974..0000000
+--- a/external/xscom-utils/getsram.1
++++ /dev/null
+@@ -1,23 +0,0 @@
+-.TH XSCOM "1" "January 2018"
+-.SH NAME
+-getsram \- part of xscom utils
+-.SH SYNOPIS
+-.TP
+-\fBgetsram\fP [\-c | \-\-chip \fIchip\-id\fP] \fIaddr\fP
+-.TP
+-\fBgetsram\fP [\-n | \-\-occ\-channel \fIchan\fP]
+-.TP
+-\fBgetsram\fP [\-v | \-\-version]
+-.SH DESCRIPTION
+-\fBgetsram\fP utility provides an interface to query the
+-OCC RAM of an OpenPower system.
+-.SS Options
+-.TP
+-\fB\-c|\-\-chip-id\fP \fIchip-id\fP
+-Specify chipset where to read register at \fIaddr\fP
+-.TP
+-\fB\-n|\-\-occ\-channel\fP
+-Specify the channel : 0, 1, 2 or 3
+-.TP
+-\fB\-v|\-\-version\fP
+-Display version of the tool
+diff --git a/external/xscom-utils/getsram.8 b/external/xscom-utils/getsram.8
+new file mode 100644
+index 0000000..023b125
+--- /dev/null
++++ b/external/xscom-utils/getsram.8
+@@ -0,0 +1,23 @@
++.TH XSCOM "8" "January 2018"
++.SH NAME
++getsram \- part of xscom utils
++.SH SYNOPIS
++.TP
++\fBgetsram\fP [\-c | \-\-chip \fIchip\-id\fP] \fIaddr\fP
++.TP
++\fBgetsram\fP [\-n | \-\-occ\-channel \fIchan\fP]
++.TP
++\fBgetsram\fP [\-v | \-\-version]
++.SH DESCRIPTION
++\fBgetsram\fP utility provides an interface to query the
++OCC RAM of an OpenPower system.
++.SS Options
++.TP
++\fB\-c|\-\-chip-id\fP \fIchip-id\fP
++Specify chipset where to read register at \fIaddr\fP
++.TP
++\fB\-n|\-\-occ\-channel\fP
++Specify the channel : 0, 1, 2 or 3
++.TP
++\fB\-v|\-\-version\fP
++Display version of the tool
+diff --git a/external/xscom-utils/putscom.1 b/external/xscom-utils/putscom.1
+deleted file mode 100644
+index 9c329fc..0000000
+--- a/external/xscom-utils/putscom.1
++++ /dev/null
+@@ -1,18 +0,0 @@
+-.TH XSCOM "1" "September 2016"
+-.SH NAME
+-putscom \- part of xscom utils
+-.SH SYNOPIS
+-.TP
+-\fBputscom\fP [\-c | \-\-chip \fIchip\-id\fP] \fIaddr\fP \fIvalue\fP
+-.TP
+-\fBputscom\fP [\-v | \-\-version]
+-.SH DESCRIPTION
+-\fBputscom\fP utility provides an interface to modify the
+-registers of the different chipsets of an OpenPower system.
+-.SS Options
+-.TP
+-\fB\-c|\-\-chip-id\fP \fIchip\-id\fP
+-Specify chipset where to modify register at \fIaddr\fP with \fIvalue\fP
+-.TP
+-\fB\-v|\-\-version\fP
+-Display version of the tool
+diff --git a/external/xscom-utils/putscom.8 b/external/xscom-utils/putscom.8
+new file mode 100644
+index 0000000..89e8bdf
+--- /dev/null
++++ b/external/xscom-utils/putscom.8
+@@ -0,0 +1,18 @@
++.TH XSCOM "8" "September 2016"
++.SH NAME
++putscom \- part of xscom utils
++.SH SYNOPIS
++.TP
++\fBputscom\fP [\-c | \-\-chip \fIchip\-id\fP] \fIaddr\fP \fIvalue\fP
++.TP
++\fBputscom\fP [\-v | \-\-version]
++.SH DESCRIPTION
++\fBputscom\fP utility provides an interface to modify the
++registers of the different chipsets of an OpenPower system.
++.SS Options
++.TP
++\fB\-c|\-\-chip-id\fP \fIchip\-id\fP
++Specify chipset where to modify register at \fIaddr\fP with \fIvalue\fP
++.TP
++\fB\-v|\-\-version\fP
++Display version of the tool

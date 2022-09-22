@@ -1,0 +1,22 @@
+From: =?utf-8?b?RnLDqWTDqXJpYyBCb25uYXJk?= <frediz@debian.org>
+Date: Wed, 21 Aug 2019 14:59:30 +0200
+Subject: Use default m32/m64 gcc flag
+
+On x86, 32b compilation fails, assuming that the build machine is 64b
+---
+ external/xscom-utils/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/external/xscom-utils/Makefile b/external/xscom-utils/Makefile
+index 69ce87a..2c799fa 100644
+--- a/external/xscom-utils/Makefile
++++ b/external/xscom-utils/Makefile
+@@ -2,7 +2,7 @@
+ CC = $(CROSS_COMPILE)gcc
+ 
+ XSCOM_VERSION ?= $(shell ../../make_version.sh xscom-utils)
+-CFLAGS += -O2 -g -Wall -m64
++CFLAGS += -O2 -g -Wall
+ 
+ prefix = /usr/local/
+ sbindir = $(prefix)/sbin

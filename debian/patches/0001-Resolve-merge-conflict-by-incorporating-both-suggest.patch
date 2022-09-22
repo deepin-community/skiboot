@@ -1,0 +1,26 @@
+From: =?utf-8?b?RnLDqWTDqXJpYyBCb25uYXJk?= <frediz@debian.org>
+Date: Wed, 21 Feb 2018 17:23:10 +0100
+Subject: Resolve merge conflict by incorporating both suggestions
+
+Forwarded: not-needed
+---
+ external/opal-prd/opal-prd.service | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/external/opal-prd/opal-prd.service b/external/opal-prd/opal-prd.service
+index dce0dd2..bb38786 100644
+--- a/external/opal-prd/opal-prd.service
++++ b/external/opal-prd/opal-prd.service
+@@ -2,9 +2,11 @@
+ Description=OPAL PRD daemon
+ ConditionVirtualization=false
+ ConditionPathExists=/sys/firmware/devicetree/base/ibm,opal/diagnostics
++Documentation=man:opal-prd(8)
+ 
+ [Service]
+-ExecStart=/usr/sbin/opal-prd
++EnvironmentFile=/etc/default/opal-prd
++ExecStart=/usr/sbin/opal-prd $DAEMON_OPTS
+ Restart=always
+ 
+ [Install]
